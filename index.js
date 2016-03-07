@@ -3,6 +3,7 @@
 var BufferStreams = require('bufferstreams');
 var PluginError = require('gulp-util').PluginError;
 var CLIEngine = require('eslint').CLIEngine;
+var gulpUtil = require('gulp-util');
 var util = require('./util');
 var path = require('path');
 
@@ -17,6 +18,11 @@ function gulpEslint(options) {
 	var linter = new CLIEngine(options);
 
 	function verify(str, filePath) {
+		if (options.printConfig) {
+			var fileConfig = linter.getConfigForFile(filePath);
+			gulpUtil.log('ESLint config for ' + filePath);
+			gulpUtil.log(JSON.stringify(fileConfig, null, '	'));
+		}
 		var result = linter.executeOnText(str, filePath).results[0];
 		// Note: Fixes are applied as part of "executeOnText".
 		// Any applied fix messages have been removed from the result.
